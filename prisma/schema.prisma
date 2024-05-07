@@ -34,18 +34,30 @@ model Rarity {
 }
 
 model Product {
-  id          Int    @id @default(autoincrement())
-  name        String @map("name")
-  description String @map("description")
-  price       Float  @map("price")
-  image       String @map("image")
-  idRarity    Int    @map("id_rarity")
-  rarity      Rarity @relation(fields: [idRarity], references: [id])
+  id                Int                 @id @default(autoincrement())
+  name              String              @map("name")
+  description       String?             @map("description")
+  price             Float               @map("price")
+  image             String?             @map("image")
+  idRarity          Int                 @map("id_rarity")
+  rarity            Rarity              @relation(fields: [idRarity], references: [id])
+  ProductOnMerchant ProductOnMerchant[]
 
   @@map(name: "products")
 }
 
 model Merchant {
-  id   Int    @id @default(autoincrement())
-  name String @map("name")
+  id                Int                 @id @default(autoincrement())
+  name              String              @map("name")
+  ProductOnMerchant ProductOnMerchant[]
+}
+
+model ProductOnMerchant {
+  id         Int      @id @default(autoincrement())
+  idProduct  Int      @map("id_product")
+  idMerchant Int      @map("id_merchant")
+  product    Product  @relation(fields: [idProduct], references: [id])
+  merchant   Merchant @relation(fields: [idMerchant], references: [id])
+
+  @@map(name: "products_merchants")
 }
