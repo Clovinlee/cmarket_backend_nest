@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma, Product } from "@prisma/client";
+import { CreateProductDto } from "src/dto/product/create-product.dto";
 import { SearchProductDTO } from "src/dto/product/search-product.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 
@@ -46,20 +47,23 @@ export class ProductService {
                     ...nameQuery,
                     ...priceQuery,
                     {
-                        idRarity: {
+                        id_rarity: {
                             in: query.rarity
                         }
                     },
                     {
                         ProductOnMerchant: {
                             some: {
-                                idMerchant: {
+                                id_merchant: {
                                     in: query.merchant
                                 }
                             }
                         },
                     }
                 ]
+            },
+            include: {
+                rarity: true
             },
             orderBy: {
                 id: "asc",
@@ -71,12 +75,21 @@ export class ProductService {
             "pagination":{
                 "page":query.page,
                 "pageSize": query.pagesize,
-                "totalPages": Math.floor( totalProductCount / query.pagesize),
+                "totalPages": Math.ceil( totalProductCount / query.pagesize),
             }, 
             "products": listProducts, 
         }
 
 
         // return this.prisma.product.findMany();
+    }
+
+    async createProduct(data: Prisma.ProductCreateInput) {
+        return this.prisma.product.create({
+           data,
+           include: {
+                rarity: true
+              }
+        });
     }
 }

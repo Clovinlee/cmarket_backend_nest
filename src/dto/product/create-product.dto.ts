@@ -16,4 +16,8 @@ export class CreateProductDto {
   @IsString()
   @IsOptional()
   image: string;
+
+  @IsNotEmpty()
+  @IsNumberString()
+  id_rarity: string;
 }

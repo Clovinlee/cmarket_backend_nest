@@ -26,7 +26,7 @@ model User {
 model Rarity {
   id      Int       @id @default(autoincrement())
   name    String    @map("name")
-  level   String    @map("level")
+  level   Int       @map("level")
   color   String    @map("color")
   Product Product[]
 
@@ -39,8 +39,8 @@ model Product {
   description       String?             @map("description")
   price             Float               @map("price")
   image             String?             @map("image")
-  idRarity          Int                 @map("id_rarity")
-  rarity            Rarity              @relation(fields: [idRarity], references: [id])
+  id_rarity         Int                 @map("id_rarity")
+  rarity            Rarity              @relation(fields: [id_rarity], references: [id])
   ProductOnMerchant ProductOnMerchant[]
 
   @@map(name: "products")
@@ -53,11 +53,11 @@ model Merchant {
 }
 
 model ProductOnMerchant {
-  id         Int      @id @default(autoincrement())
-  idProduct  Int      @map("id_product")
-  idMerchant Int      @map("id_merchant")
-  product    Product  @relation(fields: [idProduct], references: [id])
-  merchant   Merchant @relation(fields: [idMerchant], references: [id])
+  id          Int      @id @default(autoincrement())
+  id_product  Int      @map("id_product")
+  id_merchant Int      @map("id_merchant")
+  product     Product  @relation(fields: [id_product], references: [id])
+  merchant    Merchant @relation(fields: [id_merchant], references: [id])
 
   @@map(name: "products_merchants")
 }
