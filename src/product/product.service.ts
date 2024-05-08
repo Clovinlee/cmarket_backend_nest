@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import { Prisma, Product } from "@prisma/client";
 import { SearchProductDTO } from "src/dto/product/search-product.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 
@@ -9,6 +9,8 @@ export class ProductService {
     constructor(private prisma: PrismaService) { }
 
     async searchProduct(query: SearchProductDTO) {
+
+        let listProducts : Product[];
 
         let nameQuery = [];
         for (let name of query.name.split(" ")) {
@@ -36,7 +38,7 @@ export class ProductService {
             })
         }
 
-        return this.prisma.product.findMany({
+        listProducts = await this.prisma.product.findMany({
             take: query.pagesize,
             skip: (query.page - 1) * query.pagesize,
             where: {
@@ -63,6 +65,17 @@ export class ProductService {
                 id: "asc",
             }
         })
+
+        let totalProductCount : number = await this.prisma.product.count();
+        return {
+            "pagination":{
+                "page":query.page,
+                "pageSize": query.pagesize,
+                "totalPages": Math.floor( totalProductCount / query.pagesize),
+            }, 
+            "products": listProducts, 
+        }
+
 
         // return this.prisma.product.findMany();
     }
