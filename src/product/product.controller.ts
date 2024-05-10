@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Get, HttpException, Param, Post, Put, Query, UsePipes, ValidationPipe } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { SearchProductDTO } from "src/dto/product/search-product.dto";
 import { Prisma } from "@prisma/client";
 import { CreateProductDto } from "src/dto/product/create-product.dto";
 
-@Controller("/api/products")
+@Controller("/products")
 export class ProductController {
     constructor(private readonly productService: ProductService) {}
   
@@ -21,15 +21,23 @@ export class ProductController {
         let createInput :Prisma.ProductCreateInput = {
             name: createProductDto.name,
             description: createProductDto.description,
-            price: parseFloat(createProductDto.price),
+            price: createProductDto.price,
             image: createProductDto.image,
             rarity: {
                 connect: {
-                    id: parseInt(createProductDto.id_rarity)
+                    id: createProductDto.id_rarity,
                 }
             }
         }
 
-        return this.productService.createProduct(createInput);
+        try {
+            return await this.productService.createProduct(createInput);
+        } catch (error) {
+            if(error.code == "P2025"){
+                throw new HttpException("Rarity record not found", 404);
+            }else{
+                throw new HttpException("Internal Server Error", 500);
+            }
+        }
     }
 }
