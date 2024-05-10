@@ -14,13 +14,24 @@ datasource db {
 }
 
 model User {
-  id           Int     @id @default(autoincrement())
-  email        String  @map("email")
-  password     String? @map("password")
-  name         String  @map("name")
-  emailconfirm Boolean
+  id            Int     @id @default(autoincrement())
+  email         String  @map("email")
+  password      String? @map("password")
+  name          String  @map("name")
+  email_confirm Boolean @map("email_confirm")
+  id_role       Int?    @map("id_role")
+  role          Role?   @relation(fields: [id_role], references: [id])
 
   @@map(name: "users")
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @map("name")
+  level Int    @map("level")
+  user  User[]
+
+  @@map(name: "roles")
 }
 
 model Rarity {
