@@ -1,8 +1,8 @@
 import { Body, Controller, Get, HttpException, Param, Post, Put, Query, UsePipes, ValidationPipe } from "@nestjs/common";
 import { ProductService } from "./product.service";
-import { SearchProductDTO } from "src/dto/product/search-product.dto";
+import { SearchProductDTO } from "src/product/dto/search-product.dto";
 import { Prisma } from "@prisma/client";
-import { CreateProductDto } from "src/dto/product/create-product.dto";
+import { CreateProductDto } from "src/product/dto/create-product.dto";
 
 @Controller("/products")
 export class ProductController {
