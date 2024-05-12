@@ -49,8 +49,8 @@ export class ProductService {
                     ...priceQuery,
                     {
                         OR: [
-                            query.rarity.length != 0 ? { id_rarity: { in: query.rarity } } : {},
-                            query.merchant.length != 0 ? {
+                            query.rarity != null && query.rarity.length != 0 ? { id_rarity: { in: query.rarity } } : {},
+                            query.merchant != null && query.merchant.length != 0 ? {
                                 ProductOnMerchant: {
                                     some: {
                                         id_merchant: {
