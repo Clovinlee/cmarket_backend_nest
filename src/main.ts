@@ -24,6 +24,6 @@ async function bootstrap() {
   // This will enable the class-validator to use the NestJS DI container
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
-  await app.listen(3000);
+  await app.listen(8000);
 }
 bootstrap();

@@ -11,7 +11,7 @@ export class ProductService {
 
     async searchProduct(query: SearchProductDTO) {
 
-        let listProducts : Product[];
+        let listProducts: Product[];
 
         let nameQuery = [];
         for (let name of query.name.split(" ")) {
@@ -24,6 +24,7 @@ export class ProductService {
         }
 
         let priceQuery = [];
+        
         if (Number.isNaN(query.minPrice) == false) {
             priceQuery.push({
                 price: {
@@ -47,20 +48,21 @@ export class ProductService {
                     ...nameQuery,
                     ...priceQuery,
                     {
-                        id_rarity: {
-                            in: query.rarity
-                        }
-                    },
-                    {
-                        ProductOnMerchant: {
-                            some: {
-                                id_merchant: {
-                                    in: query.merchant
-                                }
-                            }
-                        },
+                        OR: [
+                            query.rarity.length != 0 ? { id_rarity: { in: query.rarity } } : {},
+                            query.merchant.length != 0 ? {
+                                ProductOnMerchant: {
+                                    some: {
+                                        id_merchant: {
+                                            in: query.merchant
+                                        }
+                                    }
+                                },
+                            } : {},
+                        ]
                     }
-                ]
+
+                ],
             },
             include: {
                 rarity: true
@@ -70,14 +72,14 @@ export class ProductService {
             }
         })
 
-        let totalProductCount : number = await this.prisma.product.count();
+        let totalProductCount: number = await this.prisma.product.count();
         return {
-            "pagination":{
-                "page":query.page,
+            "pagination": {
+                "page": query.page,
                 "pageSize": query.pagesize,
-                "totalPages": Math.ceil( totalProductCount / query.pagesize),
-            }, 
-            "products": listProducts, 
+                "totalPages": Math.ceil(totalProductCount / query.pagesize),
+            },
+            "products": listProducts,
         }
 
 
@@ -86,10 +88,10 @@ export class ProductService {
 
     async createProduct(data: Prisma.ProductCreateInput) {
         return this.prisma.product.create({
-           data,
-           include: {
+            data,
+            include: {
                 rarity: true
-              }
+            }
         });
     }
 }
