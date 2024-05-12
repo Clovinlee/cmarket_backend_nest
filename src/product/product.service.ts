@@ -40,30 +40,36 @@ export class ProductService {
             })
         }
 
+        let queryWhere = {
+            AND: [
+                ...nameQuery,
+                ...priceQuery,
+                {
+                    OR: [
+                        query.rarity != null && query.rarity.length != 0 ? { id_rarity: { in: query.rarity } } : {},
+                        query.merchant != null && query.merchant.length != 0 ? {
+                            ProductOnMerchant: {
+                                some: {
+                                    id_merchant: {
+                                        in: query.merchant
+                                    }
+                                }
+                            },
+                        } : {},
+                    ]
+                }
+
+            ],
+        };
+
+        let totalProducts = await this.prisma.product.count({
+            where: queryWhere
+        });
+
         listProducts = await this.prisma.product.findMany({
             take: query.pagesize == 0 ? 1 : query.pagesize,
             skip: (query.page - 1) * query.pagesize,
-            where: {
-                AND: [
-                    ...nameQuery,
-                    ...priceQuery,
-                    {
-                        OR: [
-                            query.rarity != null && query.rarity.length != 0 ? { id_rarity: { in: query.rarity } } : {},
-                            query.merchant != null && query.merchant.length != 0 ? {
-                                ProductOnMerchant: {
-                                    some: {
-                                        id_merchant: {
-                                            in: query.merchant
-                                        }
-                                    }
-                                },
-                            } : {},
-                        ]
-                    }
-
-                ],
-            },
+            where: queryWhere,
             include: {
                 rarity: true
             },
@@ -72,12 +78,11 @@ export class ProductService {
             }
         })
 
-        let totalProductCount: number = await this.prisma.product.count();
         return {
             "pagination": {
                 "page": query.page,
                 "pageSize": query.pagesize,
-                "totalPages": Math.ceil(totalProductCount / query.pagesize),
+                "totalPages": Math.ceil(totalProducts / query.pagesize),
             },
             "products": listProducts,
         }
