@@ -22,4 +22,19 @@ export class UserReturnDto {
             dto.id_role,
         );
     }
+
+    toJson(): Record<string, any> {
+        return {
+            id: this.id,
+            name: this.name,
+            email: this.email,
+            id_role: this.id_role,
+            role: {
+                id: this.role.id,
+                name: this.role.name,
+                level: this.role.level,
+            },
+        };
+    }
+    
 }

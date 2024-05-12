@@ -3,6 +3,8 @@ import { ProductService } from "./product.service";
 import { SearchProductDTO } from "src/product/dto/search-product.dto";
 import { Prisma } from "@prisma/client";
 import { CreateProductDto } from "src/product/dto/create-product.dto";
+import { ExceptionBuilder } from "src/util/exception-builder.utils";
+import { log } from "console";
 
 @Controller("/products")
 export class ProductController {
@@ -34,9 +36,10 @@ export class ProductController {
             return await this.productService.createProduct(createInput);
         } catch (error) {
             if(error.code == "P2025"){
-                throw new HttpException("Rarity record not found", 404);
+                throw ExceptionBuilder.build("Invalid Rarity ID", 404);
             }else{
-                throw new HttpException("Internal Server Error", 500);
+                log(error);
+                throw ExceptionBuilder.build("Internal Server Error", 500);
             }
         }
     }

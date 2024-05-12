@@ -1,13 +1,21 @@
-import { Body, Controller, Get, HttpException, Param, Post, Put, Query, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Get, HttpException, Param, Post, Put, Query, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { Prisma } from "@prisma/client";
 import { connect } from "http2";
 import { log } from "console";
+import { ExceptionBuilder } from "src/util/exception-builder.utils";
+import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 
 @Controller("/users")
 export class UserController {
     constructor(private readonly userService: UserService) {}
+
+    @Post("test")
+    @UseGuards(JwtAuthGuard)
+    async test(){
+        return "Yo MacD!";
+    }
 
     
     @Post()
@@ -29,10 +37,10 @@ export class UserController {
             return await this.userService.createUser(createInput);
         } catch (error) {
             if(error.code == "P2025"){
-                throw new HttpException("Invalid Role ID", 404);
+                throw ExceptionBuilder.build("Invalid Role ID", 404);
             }else{
                 log(error);
-                throw new HttpException("Internal Server Error", 500);
+                throw ExceptionBuilder.build("Internal Server Error", 500);
             }
         }
     }
