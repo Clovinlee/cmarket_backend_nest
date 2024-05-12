@@ -41,7 +41,7 @@ export class ProductService {
         }
 
         listProducts = await this.prisma.product.findMany({
-            take: query.pagesize,
+            take: query.pagesize == 0 ? 1 : query.pagesize,
             skip: (query.page - 1) * query.pagesize,
             where: {
                 AND: [
