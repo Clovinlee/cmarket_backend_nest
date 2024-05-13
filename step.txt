@@ -3,3 +3,7 @@ npm i --save-dev @types/passport-jwt
 npm i --save-dev @types/passport-local
 npm i -D @types/passport-jwt @types/passport-local
 npm install -save @nestjs/passport passport passport-local
+
+npm i nodemailer
+npm i --save-dev @types/nodemailer
+npm i handlebars
