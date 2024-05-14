@@ -25,6 +25,18 @@ model User {
   @@map(name: "users")
 }
 
+model EmailRegister {
+  id                 Int       @id @default(autoincrement())
+  email              String    @unique @map("email")
+  email_confirm      Boolean   @default(false) @map("email_confirm")
+  email_confirm_date DateTime? @map("email_confirm_date")
+  uuid               String    @unique @map("uuid")
+  modified_at        DateTime? @default(now()) @map("modified_at")
+  created_at         DateTime? @default(now()) @map("created_at")
+
+  @@map(name: "email_register")
+}
+
 model Role {
   id    Int    @id @default(autoincrement())
   name  String @map("name")

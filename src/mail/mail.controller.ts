@@ -1,28 +1,25 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
-import { SendMailDto } from './dto/send-mail.dto';
-import { MailService } from './mail.service';
-import { link } from 'fs';
+import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Param, Post } from '@nestjs/common';
+import { ExceptionBuilder } from 'src/util/exception-builder.utils';
+import { IMailerService, IMailerServiceSymbol } from './interface/mailer.interface';
 
 @Controller('mail')
 export class MailController {
 
-    constructor(private mailService: MailService){} 
+    constructor(@Inject(IMailerServiceSymbol) private mailService: IMailerService){} 
 
     @Get("confirm/:uuid")
     async confirmMail(@Param("uuid") uuid: string) {
         return "Your UUID is : "+uuid;
     }
 
+    @HttpCode(HttpStatus.OK)
     @Post("send")
-    async sendMail() {
-        let body:SendMailDto = {
-            recipient: [{name:"MxZero", address: "mxzeromxzero6@gmail.com "}],
-            subject: "Hello Subject Mail",
-            html: "<h1>Hello Mail</h1>",
-            text: "YO MAMA",
-            placeHolderReplacements: {buttonRedirect: "http://linkButtonRedirect", linkRedirect: "http://linkRedirect", appUrl: process.env.APP_NAME}
-        };
-
-        return await this.mailService.sendMail(body);
+    async sendMail(@Body("email") email) {
+        if(email == null || email == undefined){
+            throw ExceptionBuilder.build("Email is required", HttpStatus.BAD_REQUEST);
+        }
+        const mailUrl = await this.mailService.sendMail(email, null, null);
+        
+        return {"message":mailUrl};
     }
 }
