@@ -98,6 +98,8 @@ export class NodemailerService implements IMailerService{
             }
         });
 
+        const maxExpiry: number = parseInt(process.env.MAIL_CONFIRMATION_EXPIRY.toString()); //3600 second
+        const expiry_date: Date = new Date(new Date().getTime() + 1000 * maxExpiry); // now + 1 hour
 
         return await this.prisma.$transaction(async (pr) => {
             try {
@@ -108,6 +110,7 @@ export class NodemailerService implements IMailerService{
                             uuid: uuid,
                             email_confirm: false,
                             email_confirm_date: null,
+                            expiry_at: expiry_date,
                         }
                     })
                 }else{
@@ -119,7 +122,7 @@ export class NodemailerService implements IMailerService{
                             uuid: uuid,
                             email_confirm: false,
                             email_confirm_date: null,
-                            modified_at: new Date(),
+                            expiry_at: expiry_date,
                         }
                     })
                 }

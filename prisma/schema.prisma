@@ -14,13 +14,12 @@ datasource db {
 }
 
 model User {
-  id            Int     @id @default(autoincrement())
-  email         String  @map("email")
-  password      String? @map("password")
-  name          String  @map("name")
-  email_confirm Boolean @map("email_confirm")
-  id_role       Int?    @map("id_role")
-  role          Role?   @relation(fields: [id_role], references: [id])
+  id       Int     @id @default(autoincrement())
+  email    String  @map("email")
+  password String? @map("password")
+  name     String  @map("name")
+  id_role  Int?    @map("id_role")
+  role     Role?   @relation(fields: [id_role], references: [id])
 
   @@map(name: "users")
 }
@@ -31,8 +30,8 @@ model EmailRegister {
   email_confirm      Boolean   @default(false) @map("email_confirm")
   email_confirm_date DateTime? @map("email_confirm_date")
   uuid               String    @unique @map("uuid")
-  modified_at        DateTime? @default(now()) @map("modified_at")
   created_at         DateTime? @default(now()) @map("created_at")
+  expiry_at          DateTime? @map("expiry_at")
 
   @@map(name: "email_register")
 }

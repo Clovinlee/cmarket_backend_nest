@@ -21,6 +21,7 @@ import { ExceptionBuilder } from 'src/util/exception-builder.utils';
             },
         });
         if (user) {
+            console.log(user);
             throw ExceptionBuilder.build(`${args.property} ${args.value} is already taken`, HttpStatus.CONFLICT);
             // throw new BadRequestException(`${args.property} ${email} is already taken`, '409');
             // return false;

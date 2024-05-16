@@ -1,29 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { ValidationError, useContainer } from 'class-validator';
-import { ExceptionBuilder } from './util/exception-builder.utils';
-import * as cookieParser from 'cookie-parser';
+
+import { initApp } from './app.dependency';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  app.setGlobalPrefix("api");
-  app.enableCors();
-
-  app.use(cookieParser());
-
-  app.useGlobalPipes(
-    new ValidationPipe({
-      skipMissingProperties: true,
-      exceptionFactory: (validationErrors: ValidationError[] = []) => {
-        return ExceptionBuilder.build(validationErrors.map((error) => Object.values(error.constraints).toString()), 400);
-      },
-    })
-  );
-
-  // This will enable the class-validator to use the NestJS DI container
-  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  initApp(app);
 
   await app.listen(8000);
 }

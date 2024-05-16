@@ -50,7 +50,6 @@ export class AuthController {
             name: createUserDto.name,
             email: createUserDto.email,
             password: createUserDto.password,
-            email_confirm: false,
             role: {
                 connect:{
                     id: createUserDto.id_role,
