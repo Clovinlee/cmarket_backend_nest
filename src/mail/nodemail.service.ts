@@ -48,7 +48,7 @@ export class NodemailerService implements IMailerService{
         // Mail
         const recipient: Address = { name: "", address: email };
         const subject = title ?? "Email Registration Confirmation";
-        const mailUrl = process.env.API_URL + "/mail/confirm/" + uuid;
+        const mailUrl = process.env.API_URL + "/email/confirm/" + uuid;
 
         const placeHolderReplacements: Record<string, string> = { buttonRedirect: mailUrl, linkRedirect: mailUrl, appUrl: process.env.APP_URL }
         //

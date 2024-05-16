@@ -4,7 +4,7 @@ import { IMailerService, IMailerServiceSymbol } from './interface/mailer.interfa
 import { UserService } from 'src/user/user.service';
 import { Response } from 'express';
 
-@Controller('mail')
+@Controller('email')
 export class MailController {
 
     constructor(@Inject(IMailerServiceSymbol) private mailService: IMailerService, private userService: UserService) { }
