@@ -1,13 +1,12 @@
 import { Body, Controller, HttpCode, Post, Request, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guard/local-auth.guard';
-import { UserLoginDto } from 'src/user/dto/user-login.dto';
-import { Prisma, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { ExceptionBuilder } from 'src/util/exception-builder.utils';
 import { log } from 'console';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
-import { Response } from 'express';
+import { Request as ExpressRequest, Response } from 'express';
 import { JwtRefreshAuthGuard } from './guard/jwt-refresh.guard';
 
 @Controller('auth')
@@ -17,7 +16,7 @@ export class AuthController {
     @HttpCode(200)
     @Post('login')
     @UseGuards(LocalAuthGuard) 
-    async login(@Request() req, @Res() res: Response){
+    async login(@Request() req: ExpressRequest, @Res() res: Response){
         let payload = await this.authService.login(req.user);
         res.cookie('access_token', payload.access_token, {httpOnly: true});
         res.cookie('refresh_token', payload.refresh_token, {httpOnly:true});
@@ -28,7 +27,7 @@ export class AuthController {
     @HttpCode(200)
     @Post('refresh')
     @UseGuards(JwtRefreshAuthGuard)
-    async refreshToken(@Request() req, @Res() res: Response){
+    async refreshToken(@Request() req: ExpressRequest, @Res() res: Response){
         let payload = await this.authService.refreshToken(req.user);
         res.cookie('access_token', payload.access_token, {httpOnly: true});
 

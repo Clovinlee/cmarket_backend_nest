@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Param, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Param, Post, Res } from '@nestjs/common';
 import { ExceptionBuilder } from 'src/util/exception-builder.utils';
 import { IMailerService, IMailerServiceSymbol } from './interface/mailer.interface';
 import { UserService } from 'src/user/user.service';
@@ -20,20 +20,22 @@ export class MailController {
             // means user email is already CONFIRMED & registered in DB
             if (userRegistered != null) {
                 return res.redirect(process.env.APP_URL + "/login");
+            }else{
+                // Email already CONFIRMED but user HAS NOT registered
+                return res.redirect(process.env.APP_URL + "/verify/email/" + uuid);
             }
-            // throw ExceptionBuilder.build("Email already confirmed", HttpStatus.CONFLICT);
         }
 
         try {
-            // Check expiry time based on ENV
+            // Check expiry time based on ENV | 3600 default
             let expiryTime = user.expiry_at;
             let currentTime = new Date();
 
 
             if (expiryTime < currentTime) {
-                res.header('Content-Type', 'text/html');
-
                 res.send(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Email Confirmation Expired</title></head><body><p>Email confirmation link has expired.</p><a href='${process.env.APP_URL}'>Go Back</a></body></html>`);
+
+                return ExceptionBuilder.build("Email confirmation link has expired", HttpStatus.BAD_REQUEST);
             }
 
 
@@ -61,7 +63,9 @@ export class MailController {
             throw ExceptionBuilder.build("Email already registered", HttpStatus.CONFLICT);
         }
 
+        console.log("Sending Mail to : " + email)
         const mailUrl = await this.mailService.sendMail(email, null, null);
+        console.log("Sending Mail Complete");
 
         return { "message": mailUrl };
     }
