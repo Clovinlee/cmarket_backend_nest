@@ -12,7 +12,6 @@ export class LocalAuthGuard extends AuthGuard('local'){
 
     handleRequest<TUser = any>(err: any, user: any, info: any, context: ExecutionContext, status?: any): TUser {
         if(err || !user){
-            console.log("Error at local auth guard", err, user, info);
             throw ExceptionBuilder.build("Invalid email or password", 401);
         }
 

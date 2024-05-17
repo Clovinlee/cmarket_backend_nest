@@ -18,10 +18,16 @@ export class AuthController {
     @UseGuards(LocalAuthGuard) 
     async login(@Request() req: ExpressRequest, @Res() res: Response){
         let payload = await this.authService.login(req.user);
-        res.cookie('access_token', payload.access_token, {httpOnly: true});
+        res.cookie('access_token', payload.access_token, {httpOnly:true});
         res.cookie('refresh_token', payload.refresh_token, {httpOnly:true});
-
         return res.send({user: payload.user});
+    }
+    
+    @HttpCode(200)
+    @Post("self")
+    @UseGuards(JwtAuthGuard)
+    async authSelf(@Request() req: ExpressRequest){
+        return {"user":req.user};
     }
 
     @HttpCode(200)
@@ -31,13 +37,7 @@ export class AuthController {
         let payload = await this.authService.refreshToken(req.user);
         res.cookie('access_token', payload.access_token, {httpOnly: true});
 
-        return res.send({user: payload.user});
-    }
-
-    @Post("test")
-    @UseGuards(JwtAuthGuard)
-    async test(@Request() req){
-        return req.user;
+        return res.send({message: "JWT Token Refreshed"});
     }
 
     @HttpCode(201)

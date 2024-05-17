@@ -1,7 +1,9 @@
-import { Controller, HttpCode, Param, Post, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, HttpCode, Param, Post, Res, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 import { Response } from "express";
+import { ExceptionBuilder } from "src/util/exception-builder.utils";
+import { UserReturnDto } from "./dto/user-return.dto";
 
 @Controller("/users")
 export class UserController {
@@ -25,5 +27,18 @@ export class UserController {
             return;
         }
         return res.json({"emailregister": userEmail});
+    }
+
+    @HttpCode(200)
+    @Post("/email")
+    async getUsetByEmail(@Body("email") email: string){
+        if(email == "" || email == null){
+            throw ExceptionBuilder.build("Email is required", 400);
+        }
+        let user = await this.userService.getUserByEmail(email);
+        if(!user){
+            throw ExceptionBuilder.build("User not found", 404);
+        }
+        return UserReturnDto.from(user);
     }
 }
