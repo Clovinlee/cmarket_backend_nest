@@ -10,7 +10,8 @@ export class ProductService {
     constructor(private prisma: PrismaService) { }
 
     async searchProduct(query: SearchProductDTO) {
-
+        console.log(query);
+        console.log("====================================");
         let listProducts: Product[];
 
         let nameQuery = [];
@@ -45,7 +46,7 @@ export class ProductService {
                 ...nameQuery,
                 ...priceQuery,
                 {
-                    OR: [
+                    AND: [
                         query.rarity != null && query.rarity.length != 0 ? { id_rarity: { in: query.rarity } } : {},
                         query.merchant != null && query.merchant.length != 0 ? {
                             ProductOnMerchant: {
@@ -98,5 +99,13 @@ export class ProductService {
                 rarity: true
             }
         });
+    }
+
+    async getMerchantFilters(){
+        return this.prisma.merchant.findMany();
+    }
+
+    async getRarityFilters(){
+        return this.prisma.rarity.findMany();
     }
 }

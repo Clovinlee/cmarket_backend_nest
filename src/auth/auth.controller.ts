@@ -22,6 +22,16 @@ export class AuthController {
         res.cookie('refresh_token', payload.refresh_token, {httpOnly:true});
         return res.send({user: payload.user});
     }
+
+    @HttpCode(200)
+    @Post("logout")
+    // @UseGuards(JwtAuthGuard)
+    async logout(@Request() req: ExpressRequest, @Res() res: Response){
+        // return res.send({message: "Logout Success"});
+        res.cookie('access_token', '', {httpOnly:true, expires: new Date(0)});
+        res.cookie('refresh_token', '', {httpOnly:true, expires: new Date(0)});
+        return res.send({message: "Logout Success"});
+    }
     
     @HttpCode(200)
     @Post("self")
@@ -49,6 +59,7 @@ export class AuthController {
             name: createUserDto.name,
             email: createUserDto.email,
             password: createUserDto.password,
+            image_url: createUserDto.imageUrl,
             role: {
                 connect:{
                     id: createUserDto.id_role,

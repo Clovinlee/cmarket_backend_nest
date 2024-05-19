@@ -26,5 +26,7 @@ export class CreateUserDto {
   @Validate(SameValueAsValidator, ['password'])
   confirmPassword: string;
 
+  imageUrl: string;
+
   id_role: number = 2;
 }

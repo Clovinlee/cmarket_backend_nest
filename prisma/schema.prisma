@@ -14,12 +14,13 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @map("email")
-  password String? @map("password")
-  name     String  @map("name")
-  id_role  Int?    @map("id_role")
-  role     Role?   @relation(fields: [id_role], references: [id])
+  id        Int     @id @default(autoincrement())
+  email     String  @map("email")
+  password  String? @map("password")
+  name      String  @map("name")
+  image_url String? @map("image_url")
+  id_role   Int?    @map("id_role")
+  role      Role?   @relation(fields: [id_role], references: [id])
 
   @@map(name: "users")
 }
@@ -72,6 +73,8 @@ model Merchant {
   id                Int                 @id @default(autoincrement())
   name              String              @map("name")
   ProductOnMerchant ProductOnMerchant[]
+
+  @@map(name: "merchants")
 }
 
 model ProductOnMerchant {
