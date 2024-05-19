@@ -10,8 +10,8 @@ export class ProductService {
     constructor(private prisma: PrismaService) { }
 
     async searchProduct(query: SearchProductDTO) {
-        console.log(query);
-        console.log("====================================");
+        // console.log(query);
+        // console.log("====================================");
         let listProducts: Product[];
 
         let nameQuery = [];
