@@ -1,3 +1,7 @@
+$${\color{red}IMPORTANT}$$
+#### **This is a backend repository of CMARKET application. Please visit [Main Repo](https://github.com/Clovinlee/cmarket) for proper documentation**
+
+--
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
