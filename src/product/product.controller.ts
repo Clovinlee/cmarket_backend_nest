@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, HttpException, Param, Post, Put, Query, UsePipes, ValidationPipe } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { SearchProductDTO } from "src/product/dto/search-product.dto";
-import { Prisma } from "@prisma/client";
+import { Prisma, Product } from "@prisma/client";
 import { CreateProductDto } from "src/product/dto/create-product.dto";
 import { ExceptionBuilder } from "src/util/exception-builder.utils";
 import { log } from "console";
@@ -11,13 +11,28 @@ export class ProductController {
     constructor(private readonly productService: ProductService) {}
     
     @HttpCode(200)
-    @Get("merchantfilters")
+    @Get(":slug")
+    async getProductDetails(@Param("slug") slug: string) {
+        // [ID, NAME ]
+        const productSlug = slug.split("-");
+        if(productSlug.length != 2) throw ExceptionBuilder.build("Invalid Product Slug", 400);
+        if(isNaN(parseInt(productSlug[0]))) throw ExceptionBuilder.build("Invalid Product ID", 400);
+
+        const product: Product|null = (await this.productService.getProductDetails(parseInt(productSlug[0]), productSlug[1]));
+        if(product){
+            return product;
+        }
+        throw ExceptionBuilder.build("Product Not Found", 404);
+    }
+
+    @HttpCode(200)
+    @Get("filters/merchantfilters")
     async getMerchantFilters(){
         return this.productService.getMerchantFilters();
     }
 
     @HttpCode(200)
-    @Get("rarityfilters")
+    @Get("filters/rarityfilters")
     async getRarityFilters(){
         return this.productService.getRarityFilters();
     }

@@ -9,6 +9,21 @@ export class ProductService {
 
     constructor(private prisma: PrismaService) { }
 
+    async getProductDetails(id: number, name: string) {
+        return this.prisma.product.findUnique({
+            where: {
+                id:id,
+                name: {
+                    equals: name.toLowerCase(),
+                    mode: "insensitive",
+                },
+            },
+            include: {
+                rarity: true
+            }
+        });
+    }
+
     async searchProduct(query: SearchProductDTO) {
         // console.log(query);
         // console.log("====================================");
